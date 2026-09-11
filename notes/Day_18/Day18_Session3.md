@@ -273,6 +273,48 @@ Create compound index
 Verify actual query performance
 ```
 
-This documents **everything we've genuinely covered in Session 3 today**—nothing from the unfinished practice/interview portion is being sneakily added. 😌
+## 🧪 Practice & Interview Takeaways
 
-Once you've saved it, we can continue from **Session 3 practice** exactly where we left off.
+### Compound Index Design
+
+For a query like:
+
+```javascript
+Prompt.find({
+  category: "Java",
+  author: userId
+})
+.sort({ createdAt: -1 })
+.limit(20);
+```
+
+A suitable compound index can follow the query's access pattern:
+
+```javascript
+{ category: 1, author: 1, createdAt: -1 }
+```
+
+General mental model:
+
+```text
+Equality filters
+      ↓
+Range condition
+      ↓
+Sort
+```
+
+### Key Interview Points
+
+- Compound indexes should be designed around **real query/access patterns**.
+- **Field order matters** because compound indexes are hierarchically organized.
+- The **leftmost prefix** determines which fields can be used effectively.
+- A compound index can be traversed in the reverse direction.
+- Creating an index does **not guarantee** MongoDB will use it — the **query planner** chooses the execution plan.
+- `COLLSCAN` → scans the collection.
+- `IXSCAN` → scans/uses an index.
+- Avoid indexing every field because indexes require **additional storage and maintenance**, especially during writes.
+
+### 🎯 Interview Rule
+
+> Don't choose an index simply because it contains the required fields. Choose it based on **field order + query access pattern + actual workload**.
